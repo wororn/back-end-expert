@@ -1,6 +1,6 @@
 const AddedThread = require('../../../Domains/threads/entities/AddedThread');
-const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 const AddThreadUseCase = require('../AddThreadUseCase');
+const ThreadRepository = require('../../../Domains/threads/ThreadRepository');
 
 describe('AddThreadUseCase', () => {
   /**
@@ -8,23 +8,22 @@ describe('AddThreadUseCase', () => {
    */
   it('should orchestrating the add thread action correctly', async () => {
     // Arrange
+    const owner ='user-123';
     const useCasePayload = {
-      body: 'dicoding',
+      id: 'thread-123',
       title: 'Dicoding Indonesia',
     };
+
     const expectedAddedthread = new AddedThread({
-      title: useCasePayload.title,
-      body: useCasePayload.body 
+      id: 'thread-123',
+      title: useCasePayload.title, 
     });
 
     /** creating dependency of use case */
     const mockthreadRepository = new ThreadRepository();
-
-    mockthreadRepository.verifyUserOwner = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-       
-    mockthreadRepository.addthread = jest.fn()
-      .mockImplementation(() => Promise.resolve(expectedAddedthread));
+    
+    mockthreadRepository.addThread = jest.fn()
+      .mockImplementation(() => Promise.resolve(owner,expectedAddedthread));
 
     /** creating use case instance */
     const getthreadUseCase = new AddThreadUseCase({
@@ -32,14 +31,14 @@ describe('AddThreadUseCase', () => {
     });
 
     // Action
-    const addedthread = await getthreadUseCase.execute(useCasePayload);
+    const addedthread = await getthreadUseCase.execute(owner,useCasePayload);
 
     // Assert
-    expect(addedthread).toStrictEqual(expectedAddedthread);
-    expect(mockthreadRepository.verifyThreadOwner).toBeCalledWith('user-123');
-    expect(mockthreadRepository.addthread).toBeCalledWith(new AddThreadUseCase({
-      title: useCasePayload.title,
-      body: useCasePayload.body 
-    }));
+    expect(addedthread).toStrictEqual(owner,expectedAddedthread);
+    expect(mockthreadRepository.addThread).toBeCalledWith(owner,{
+      id: 'thread-123',
+      title: 'Dicoding Indonesia',
+    
+    });
   });
 });

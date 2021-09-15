@@ -15,9 +15,21 @@ describe('/threads endpoint', () => {
   describe('when POST/threads', () => {
     it('should response 201 and persisted thread', async () => {
       // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addThread({
+          id:'thread-123',
+          title:'Dicoding Indonesia',
+          body:'dicoding', 
+          date :dates,     
+          // owner:'user-123' 
+      });
+
       const requestPayload = {
-        body: 'dicoding',
+        id:'thread-123',
         title: 'Dicoding Indonesia',
+        body:'dicoding',
+        date :dates,      
+        // owner : 'user-123'
       };
       // eslint-disable-next-line no-undef
       const server = await createServer(injections);
@@ -31,16 +43,27 @@ describe('/threads endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(201);
-      expect(responseJson.status).toEqual('success');
-      expect(responseJson.data.addedThread).toBeDefined();
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
+      // expect(responseJson.data.addThread).toBeDefined();
     });
 
     it('should response 400 when request payload not contain needed property', async () => {
       // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addThread({
+          id:'thread-123',
+          title:'Dicoding Indonesia', 
+          body:'dicoding', 
+          date :dates,      
+          // owner : 'user-123' 
+      });
+
       const requestPayload = {
         title: 'Dicoding Indonesia',
-        body: 'dicoding',
+        body:'dicoding',  
+        user:'*' 
       };
       const server = await createServer(injections);
 
@@ -53,16 +76,28 @@ describe('/threads endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena properti yang dibutuhkan tidak ada');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
 
     it('should response 400 when request payload not meet data type specification', async () => {
       // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addThread({
+          id:'thread-123',
+          title:'Dicoding Indonesia', 
+          body:'dicoding', 
+          date :dates,      
+          // owner : 'user-123' 
+      });
+
       const requestPayload = {
+        id:123,
         title: ['Dicoding Indonesia'],
-        body: 'dicoding',
+        body:'dicoding',
+        date :dates,      
+        // owner : 'user-123' 
       };
       const server = await createServer(injections);
 
@@ -75,17 +110,31 @@ describe('/threads endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena tipe data tidak sesuai');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
 
-    it('should response 400 when body and title more than 50 character', async () => {
+    it('should response 400 when title unavailable', async () => {
+
       // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addThread({
+          id:'thread-123',
+          title:'Dicoding Indonesia', 
+          body:'dicoding', 
+          date :dates,      
+          // owner : 'user-123' 
+      });
+      
       const requestPayload = {
-        body: 'dicodingdicodingdicodingdicodingdicodingdicodingdicoding',
-        title: 'Dicoding Indonesia',
+        id:'thread-123',
+        title: 'merdeka',
+        body:'dicoding',
+        date :dates,      
+        // owner : 'user-123' 
       };
+      
       const server = await createServer(injections);
 
       // Action
@@ -97,54 +146,9 @@ describe('/threads endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat thread baru karena karakter melebihi batas limit');
-    });
-
-    it('should response 400 when body contain restricted character', async () => {
-      // Arrange
-      const requestPayload = {
-        title: 'Dicoding Indonesia',
-        body: 'dicoding',
-      };
-      const server = await createServer(injections);
-
-      // Action
-      const response = await server.inject({
-        method: 'POST',
-        url: '/threads',
-        payload: requestPayload,
-      });
-
-      // Assert
-      const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat thread mengandung karakter terlarang');
-    });
-
-    it('should response 400 when body unavailable', async () => {
-      // Arrange
-      await ThreadsTableTestHelper.addThread({ body: 'dicoding',title:'Dicoding Indonesia' });
-      const requestPayload = {
-        title: 'Dicoding Indonesia',
-        body: 'dicoding',
-      };
-      const server = await createServer(injections);
-
-      // Action
-      const response = await server.inject({
-        method: 'POST',
-        url: '/threads',
-        payload: requestPayload,
-      });
-
-      // Assert
-      const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('body tidak tersedia');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
   });
 });

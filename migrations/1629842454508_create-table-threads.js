@@ -17,23 +17,21 @@ exports.up = pgm => {
         
         body: {
             type: 'TEXT',
-            notNull: true,
+            notNull: false,
           },
 
         date: {
             type: 'VARCHAR(70)',
-            notNull: true,
+            notNull:false,
           },
 
         owner: {
             type: 'VARCHAR(50)',
-            notNull: true,
+            notNull: false,
           },
 
       });
-
-      pgm.addConstraint('threads', 'fk_threads.owner_users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
-    
+ 
 };
 
 exports.down = pgm => {

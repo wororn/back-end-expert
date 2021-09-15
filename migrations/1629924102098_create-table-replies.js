@@ -13,8 +13,8 @@ exports.up = pgm => {
 
         comment_id: {
             type: 'VARCHAR(50)',
-            notNull: true,
-            unique: true,
+            notNull: false,
+            unique: false,
         },
 
         content: {
@@ -24,12 +24,12 @@ exports.up = pgm => {
 
         date: {
             type: 'VARCHAR(70)',
-            notNull: true,
+            notNull: false,
         },
 
         owner: {
             type: 'VARCHAR(50)',
-            notNull: true,
+            notNull: false,
         },
 
         is_delete: {
@@ -39,10 +39,6 @@ exports.up = pgm => {
 
    });
 
-   pgm.addConstraint('replies', 'fk_replies.owner_users.id', 'FOREIGN KEY(owner) REFERENCES users(id) ON DELETE CASCADE');
-   pgm.addConstraint('replies', 'unique_comment_id ', 'UNIQUE(comment_id)');
-   pgm.addConstraint('replies', 'fk_replies.comment_id_comments.id', 'FOREIGN KEY(comment_id) REFERENCES comments(id) ON DELETE CASCADE');
-   
 }
 
 exports.down = pgm => {

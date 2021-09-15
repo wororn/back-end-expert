@@ -1,35 +1,36 @@
 /* istanbul ignore file */
 const pool = require('../src/Infrastructures/database/postgres/pool');
-
+const day= new Date().toISOString();
 const ThreadsTableTestHelper = {
+  
   async addThread({
-    id='thread-123', body ='dicoding', title ='Dicoding Indonesia', owner='user-123'
+    id='thread-123', body ='dicoding', title ='Dicoding Indonesia', date = day,owner='user-123'
   }) {
     const query = {
-      text: 'INSERT INTO threads VALUES($1, $2, $3, $4)',
-      values: [id,body,title,owner],
+      text: 'INSERT INTO threads VALUES($1, $2, $3, $4,$5)',
+      values: [id,body,title,date,owner],
     };
 
     await pool.query(query);
   },
 
   async addComment({
-    id='comment-123', content='dicoding', thread_id='thread-123', owner='user-123'
+    id='comment-123', content='Dicoding Indonesia', thread_id='thread-123',date = day,owner='user-123'
   }) {
     const query = {
-      text: 'INSERT INTO comments VALUES($1, $2, $3, $4)',
-      values: [id,content,thread_id,owner],
+      text: 'INSERT INTO comments VALUES($1, $2, $3, $4, $5)',
+      values: [id,content,thread_id,date,owner],
     };
 
     await pool.query(query);
   },
 
   async addReply({
-    id='reply-123', content='dicoding', comment_id='comment-123', owner='user-123'
+    id='reply-123', content='Dicoding Indonesia', comment_id='comment-123',date = day, owner='user-123'
   }) {
     const query = {
-      text: 'INSERT INTO replies VALUES($1, $2, $3, $4)',
-      values: [id,content,comment_id,owner],
+      text: 'INSERT INTO replies VALUES($1, $2, $3, $4, $5)',
+      values: [id,content,comment_id,date,owner],
     };
 
     await pool.query(query);

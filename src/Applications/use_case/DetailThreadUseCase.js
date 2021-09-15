@@ -1,17 +1,14 @@
-const DetailThread = require('../../Domains/threads/entities/DetailThread');
+const ThreadRepositoryPostgres = require('../../Infrastructures/repository/ThreadRepositoryPostgres');
 
 class DetailThreadUseCase {
     constructor({threadRepository}) {
       this._threadRepository = threadRepository;     
+      this._threadRepositoryPostgres= ThreadRepositoryPostgres;
     }
   
-    async execute(useCasePayload) {
-
-      const { threadId } = new DetailThread(useCasePayload);
-       
-        await this._threadRepository.getThreadSpecById(threadId);
-      
-        return this._threadRepository.getThreadById(threadId); 
+    async execute(threadId) {
+     
+        await this._threadRepository.getThreadById(threadId);
        
     }
   

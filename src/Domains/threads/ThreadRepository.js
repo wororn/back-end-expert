@@ -4,16 +4,16 @@ class ThreadRepository {
   constructor(){
   this._pool = pool;
   }
-    async addThread(owner,newThread) {
+    async addThread(owner,AddedThread) {
       throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
 
-    async addComment(owner,threadId,newComment) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    async addComment(owner,threadId,AddedComment) {
+        throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
 
-    async addReply(owner,commentId,newReply) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+    async addReply(owner,commentId,AddedReply) {
+        throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
       
     async getThreadById(threadId) {
@@ -21,11 +21,11 @@ class ThreadRepository {
       }
 
     async getCommentById(commentId) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+        throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
 
     async getReplyById(replyId) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+        throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
 
     async getThreadSpecById(threadId) {
@@ -33,15 +33,19 @@ class ThreadRepository {
       }
 
     async getCommentSpecById(commentId) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+        throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
 
+    async getReplySpecById(commentId) {
+        throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+      }
+      
     async deleteCommentById(threadId,commentId) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+        throw new Error('COMMENT_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }
 
     async deleteReplyById(threadId,commentId,replyId) {
-        throw new Error('THREAD_REPOSITORY.METHOD_NOT_IMPLEMENTED');
+        throw new Error('REPLY_REPOSITORY.METHOD_NOT_IMPLEMENTED');
       }   
 }
 

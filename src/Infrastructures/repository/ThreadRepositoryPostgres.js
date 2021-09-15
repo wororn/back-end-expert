@@ -10,15 +10,15 @@ class ThreadRepositoryPostgres extends ThreadRepository {
    
   }
 
-  async addThread(owner,newThread) {
-    
-    const id = `thread-${this._idGenerator()}`;
-    const { 
+  async addThread(owner,AddedThread) {
+ 
+    const {    
       title,
-      body,
-     } = newThread;
+      body
+     } = AddedThread;
   
     const date= new Date().toISOString();
+    const id = `thread-${this._idGenerator()}`;
    
     const query = {
       text: 'INSERT INTO threads VALUES($1,$2,$3,$4,$5) RETURNING id,title,owner',
@@ -32,22 +32,21 @@ class ThreadRepositoryPostgres extends ThreadRepository {
       throw new  InvariantError('Gagal menambah Thread');
     
     }
-
-    return new newThread(
-      { ...result.rows[0]
-      }); 
+    
+    return result.rows[0];
     
   }
 
-  async addComment(owner,threadId,newComment) {
-   
-    const id = `comment-${this._idGenerator()}`;
+  async addComment(owner,threadId,AddedComment) {
+      
     const {  
         content    
-    } = newComment;
+    } = AddedComment;
+
+    const id = `comment-${this._idGenerator()}`;
 
     const date= new Date().toISOString();
-    const [is_delete]=false;
+    const [is_delete]='false';
     
     const query = {
       text: 'INSERT INTO comments VALUES($1,$2,$3,$4,$5,$6) RETURNING id,content,owner',
@@ -66,15 +65,15 @@ class ThreadRepositoryPostgres extends ThreadRepository {
      
   }
 
-  async addReply(owner,commentId,newReply) {
+  async addReply(owner,commentId,AddedReply) {
     
-    const id = `reply-${this._idGenerator()}`; 
     const { 
        content   
-    } = newReply;
-   
+    } = AddedReply;
+
+    const id = `reply-${this._idGenerator()}`; 
     const date= new Date().toISOString();
-    const[is_delete]=false;
+    const[is_delete]='false';
     
     const query = {
       text: 'INSERT INTO replies VALUES($1,$2,$3,$4,$5,$6) RETURNING id,content,owner',
@@ -180,7 +179,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   async deleteCommentById(threadId,commentId) 
     
   {
-        const [is_delete]= true ;
+        const [is_delete]= "true" ;
         const content="**komentar telah dihapus**";
         
         const query = {
@@ -200,7 +199,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
     
   {
      
-      const [is_delete] = true;
+      const [is_delete] = "true";
       const content="**balasan telah dihapus**";
      
       const query = {
@@ -225,7 +224,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
   async getThreadSpecById(threadId) {
     
     const query = {
-      text: 'SELECT id as threadId FROM threads WHERE id = $1',
+      text: 'SELECT distinct id as threadId FROM threads WHERE id = $1',
       values: [threadId]
     };
     const result = await this._pool.query(query);
@@ -240,7 +239,7 @@ class ThreadRepositoryPostgres extends ThreadRepository {
 async getCommentSpecById(commentId) {
   
     const query = {
-      text: 'SELECT id as commentId FROM comments WHERE id = $1',
+      text: 'SELECT distinct id as commentId FROM comments WHERE id = $1',
       values: [commentId]
     };
     const result = await this._pool.query(query);
@@ -251,12 +250,11 @@ async getCommentSpecById(commentId) {
     return  result.rows[0];
   
     }
-
-  
+ 
 async getReplySpecById(replyId) {
   
   const query = {
-    text: 'SELECT id as replyId FROM replies WHERE id = $1',
+    text: 'SELECT distinct id as replyId FROM replies WHERE id = $1',
     values: [replyId]
   };
   const result = await this._pool.query(query);
@@ -272,7 +270,7 @@ async getReplySpecById(replyId) {
      
       const query = {
         text: 
-            ` SELECT id as owner FROM Users 
+            ` SELECT distinct id as owner FROM Users 
               WHERE id = $1 `,
         values: [owner]
       };
@@ -283,15 +281,14 @@ async getReplySpecById(replyId) {
     
     }
 
-
     async verifyThreadOwner(threadId,owner) {
      
       const query = {
         text: 
-            ` SELECT id as threadId,owner 
+            ` SELECT distinct threads.id as threadId,owner 
               FROM threads 
               INNER JOIN users ON threads.owner=users.id  
-              WHERE id = $1 and owner=$2`,
+              WHERE threads.id = $1 and owner=$2`,
         values: [threadId,owner]
       };
       const result = await this._pool.query(query);
@@ -305,10 +302,10 @@ async getReplySpecById(replyId) {
      
       const query = {
         text: 
-            ` SELECT id as commentId,owner 
+            ` SELECT distinct comments.id as commentId,owner 
               FROM comments 
               INNER JOIN users ON comments.owner=users.id  
-              WHERE id = $1 and owner=$2`,
+              WHERE comments.id = $1 and owner=$2`,
         values: [commentId,owner]
       };
       const result = await this._pool.query(query);
@@ -317,6 +314,23 @@ async getReplySpecById(replyId) {
       }
     
     }
+
+    async verifyReplyOwner(replyId,owner) {
+     
+      const query = {
+        text: 
+            ` SELECT distinct replies.id as replyId,owner 
+              FROM replies 
+              INNER JOIN users ON replies.owner=users.id 
+              WHERE replies.id = $1 and owner=$2`,
+        values: [replyId,owner]
+      };
+      const result = await this._pool.query(query);
+      if (!result.rows.length) {
+        throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
+      }
+     
+    }   
 
 }
 

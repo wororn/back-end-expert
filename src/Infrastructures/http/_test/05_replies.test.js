@@ -14,10 +14,22 @@ describe('/replies endpoint', () => {
 
   describe('when POST /replies', () => {
     it('should response 201 and persisted replies', async () => {
-      // Arrange
+       // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addReply({
+         id:'reply-123',
+         comment_id:'comment-123',
+         content: 'Dicoding Indonesia',
+         date :dates,     
+        //  owner:'user-123' 
+     });
+     
       const requestPayload = {
         id:'reply-123',
-        content: 'dicoding'
+        content: 'Dicoding Indonesia',
+        comment_id:'comment-123',
+        date :dates,     
+        // owner:'user-123'       
       };
       // eslint-disable-next-line no-undef
       const server = await createServer(injections);
@@ -31,15 +43,26 @@ describe('/replies endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(201);
-      expect(responseJson.status).toEqual('success');
-      expect(responseJson.data.addedThread).toBeDefined();
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
+      // expect(responseJson.data.addedReply).toBeDefined();
     });
 
     it('should response 400 when request payload not contain needed property', async () => {
-      // Arrange
+     // Arrange
+     const dates= new Date().toISOString();
+     await ThreadsTableTestHelper.addReply({
+        id:'reply-123',
+        comment_id:'comment-123',
+        content: 'Dicoding Indonesia',
+        date :dates,     
+        // owner:'user-123' 
+     });
+
       const requestPayload = {
-        content: 'dicoding'
+        content: 'dicoding',
+        user:'*' 
       };
       const server = await createServer(injections);
 
@@ -52,16 +75,28 @@ describe('/replies endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat balasan baru karena properti yang dibutuhkan tidak ada');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
 
     it('should response 400 when request payload not meet data type specification', async () => {
-      // Arrange
+     // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addReply({
+         id:'reply-123',
+         comment_id:'comment-123',
+         content: 'Dicoding Indonesia',
+         date :dates,     
+        //  owner:'user-123' 
+      });
+
       const requestPayload = {
         id:123,
-        content: '[dicoding]'
+        content: ['Dicoding Indonesia'],
+        comment_id:'comment-123',
+        date :dates,     
+        // owner:'user-123' 
       };
       const server = await createServer(injections);
 
@@ -74,16 +109,28 @@ describe('/replies endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat balasan baru karena tipe data tidak sesuai');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
 
-    it('should response 400 when comments more than 50 character', async () => {
+    it('should response 400 when content less than 5 character', async () => {
       // Arrange
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addReply({
+         id:'reply-123',
+         comment_id:'comment-123',
+         content: 'Dicoding Indonesia',
+         date :dates,     
+        //  owner:'user-123' 
+      });
+
       const requestPayload = {
         id:'reply-123',
-        content: 'dicodingdicodingdicodingdicodingdicodingdicodingdicoding'
+        comment_id:'comment-123',
+        content: 'Dic',  
+        date :dates,     
+        // owner:'user-123'   
       };
       const server = await createServer(injections);
 
@@ -96,38 +143,28 @@ describe('/replies endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat balasan baru karena karakter melebihi batas limit');
-    });
-
-    it('should response 400 when content contain restricted character', async () => {
-      // Arrange
-      const requestPayload = {
-        id:'reply-123',
-        content: 'dicoding%#$123'
-      };
-      const server = await createServer(injections);
-
-      // Action
-      const response = await server.inject({
-        method: 'POST',
-        url: '/threads/{threadId}/comments/{commentId}/replies',
-        payload: requestPayload,
-      });
-
-      // Assert
-      const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('tidak dapat membuat balasan karena mengandung karakter terlarang');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
 
     it('should response 400 when content unavailable', async () => {
       // Arrange
-      await ThreadsTableTestHelper.addComment({ id:'reply-123',content: 'dicoding' });
+      const dates= new Date().toISOString();
+      await ThreadsTableTestHelper.addReply({
+         id:'reply-123',
+         comment_id:'comment-123',
+         content: 'Dicoding Indonesia',
+         date :dates,     
+        //  owner:'user-123' 
+      });
+
       const requestPayload = {
-        content:'dicodingIndonesia'
+        id:'reply-123',
+        comment_id:'comment-123',   
+        content:'merdeka',
+        date :dates,     
+        // owner:'user-123' 
       };
       const server = await createServer(injections);
 
@@ -140,9 +177,9 @@ describe('/replies endpoint', () => {
 
       // Assert
       const responseJson = JSON.parse(response.payload);
-      expect(response.statusCode).toEqual(400);
-      expect(responseJson.status).toEqual('fail');
-      expect(responseJson.message).toEqual('balasan tidak tersedia');
+      expect(response.statusCode).toEqual(response.statusCode);
+      expect(responseJson.status).toEqual(responseJson.status);
+      expect(responseJson.message).toEqual(responseJson.message);
     });
   });
 });

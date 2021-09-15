@@ -27,8 +27,7 @@ class ThreadsHandler {
     }
   
       async postThreadHandler(request, h) {
-        try {
-        
+     
             const { id: owner } = request.auth.credentials;
            
             const addedThread= await this._addThreadUseCase.execute(owner,request.payload);
@@ -46,32 +45,11 @@ class ThreadsHandler {
             });
             response.code(201);
             return response;
-
-        } catch (error) {
-          if (error instanceof ClientError) {
-            const response = h.response({
-              status: 'fail',
-              message: error.message,
-            });
-            response.code(error.statusCode);
-            return response;
-        }
-
-        // Server ERROR!
-        const response = h.response({
-          status: 'error',
-          message: 'Maaf, terjadi kegagalan pada server kami.',
-        });
-        response.code(500);
-        console.error(error);
-        return response;
-      }
-
+       
     }
 
     async postCommentHandler(request, h) {
-      try {
-       
+    
           const { id: owner } = request.auth.credentials;
           const threadId = request.params;
           const addedComment= await this._addCommentUseCase.execute(owner,threadId,request.payload);
@@ -91,30 +69,10 @@ class ThreadsHandler {
           response.code(201);
           return response;
 
-      } catch (error) {
-        if (error instanceof ClientError) {
-          const response = h.response({
-            status: 'fail',
-            message: error.message,
-          });
-          response.code(error.statusCode);
-          return response;
-      }
-
-      // Server ERROR!
-      const response = h.response({
-        status: 'error',
-        message: 'Maaf, terjadi kegagalan pada server kami.',
-      });
-      response.code(500);
-      console.error(error);
-      return response;
-    }
-
   }
 
   async postReplyHandler(request, h) {
-    try {
+  
         const { id: owner } = request.auth.credentials;
         const commentId = request.params;
         const addedReply= await this._addReplyUseCase.execute(owner,commentId,request.payload);
@@ -134,31 +92,13 @@ class ThreadsHandler {
         response.code(201);
         return response;
 
-    } catch (error) {
-      if (error instanceof ClientError) {
-        const response = h.response({
-          status: 'fail',
-          message: error.message,
-        });
-        response.code(error.statusCode);
-        return response;
-    }
-
-    // Server ERROR!
-    const response = h.response({
-      status: 'error',
-      message: 'Maaf, terjadi kegagalan pada server kami.',
-    });
-    response.code(500);
-    console.error(error);
-    return response;
-  }
-
 }
 
   async getThreadsByIdHandler(request) {
+
+    const threadId = request.params;
    
-    const thread= await this._detailThreadUseCase.execute(request.payload);
+    const thread= await this._detailThreadUseCase.execute(threadId);
      let getThread=thread.map(getThread);
     return {
       status: 'success',
@@ -180,7 +120,7 @@ class ThreadsHandler {
   }
 
   async deleteReplyByIdHandler(request) {
-    const { id: owner } = request.auth.credentials;
+     const { id: owner } = request.auth.credentials;
     const {threadId,commentId,replyId }= request.params;
   
     await this._deleteReplyUseCase.execute(owner,threadId,commentId,replyId);

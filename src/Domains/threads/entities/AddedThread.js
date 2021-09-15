@@ -1,22 +1,28 @@
 class AddedThread {
     constructor(payload) {
-      this._verifyPayload(payload);
+       this._verifyPayload(payload);
       
-      const { title,body } = payload;
+      const {
+        id ='thread-123',
+        title ='Dicoding Indonesia',
+        owner = 'user-123'
+        
+      } = payload;
     
+      this.id = id;
       this.title = title;
-      this.body = body;
-     
+      this.owner = owner;
+  
     }
 
-    _verifyPayload({body, title}) {
+    _verifyPayload({title}) {
  
-   if ( !body || !title) {
+      if (!title) {
         throw new Error('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
       }
   
-      if ( typeof body !== 'string' || typeof title !== 'string') {
-        throw new Error('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+      if ( typeof title !== 'string') {
+        throw new Error('ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION');
       }
     }
   }
